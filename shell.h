@@ -12,6 +12,11 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 
+/**
+ * struct builtin_s - Builtin struct for command args.
+ * @name: The name of the command builtin i.e cd, exit, env
+ * @f: data type pointer function.
+ */
 typedef struct builtin_s
 {
 	char *name;
