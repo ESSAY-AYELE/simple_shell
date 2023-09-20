@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "main.h"
 
 /**
  * is_cdir - checks ":" if is in the current directory.
@@ -26,15 +26,16 @@ int is_cdir(char *path, int *i)
  * _which - locates a command
  *
  * @cmd: command name
+ * @_environ: environment variable
  * Return: location of the command.
  */
-char *_which(char *cmd)
+char *_which(char *cmd, char **_environ)
 {
 	char *path, *ptr_path, *token_path, *dir;
 	int len_dir, len_cmd, i;
 	struct stat st;
 
-	path = _getenv("PATH", environ);
+	path = _getenv("PATH", _environ);
 	if (path)
 	{
 		ptr_path = _strdup(path);
@@ -74,16 +75,16 @@ char *_which(char *cmd)
 /**
  * is_executable - determines if is an executable
  *
- * @cmd: data structure
+ * @datash: data structure
  * Return: 0 if is not an executable, other number if it does
  */
-int is_executable(char *cmd)
+int is_executable(data_shell *datash)
 {
 	struct stat st;
 	int i;
 	char *input;
 
-	input = cmd;
+	input = datash->args[0];
 	for (i = 0; input[i]; i++)
 	{
 		if (input[i] == '.')
@@ -112,6 +113,7 @@ int is_executable(char *cmd)
 	{
 		return (i);
 	}
+	get_error(datash, 127);
 	return (-1);
 }
 
@@ -119,20 +121,22 @@ int is_executable(char *cmd)
  * check_error_cmd - verifies if user has permissions to access
  *
  * @dir: destination directory
- * @cmd: command
+ * @datash: data structure
  * Return: 1 if there is an error, 0 if not
  */
-int check_error_cmd(char *dir, char **cmd)
+int check_error_cmd(char *dir, data_shell *datash)
 {
 	if (dir == NULL)
 	{
+		get_error(datash, 127);
 		return (1);
 	}
 
-	if (_strcmp(cmd[0], dir) != 0)
+	if (_strcmp(datash->args[0], dir) != 0)
 	{
 		if (access(dir, X_OK) == -1)
 		{
+			get_error(datash, 126);
 			free(dir);
 			return (1);
 		}
@@ -140,8 +144,9 @@ int check_error_cmd(char *dir, char **cmd)
 	}
 	else
 	{
-		if (access(cmd[0], X_OK) == -1)
+		if (access(datash->args[0], X_OK) == -1)
 		{
+			get_error(datash, 126);
 			return (1);
 		}
 	}
@@ -152,10 +157,10 @@ int check_error_cmd(char *dir, char **cmd)
 /**
  * cmd_exec - executes command lines
  *
- * @cmd: data relevant (args and input)
+ * @datash: data relevant (args and input)
  * Return: 1 on success.
  */
-int cmd_exec(char *cmd[])
+int cmd_exec(data_shell *datash)
 {
 	pid_t pd;
 	pid_t wpd;
@@ -164,13 +169,13 @@ int cmd_exec(char *cmd[])
 	char *dir;
 	(void) wpd;
 
-	exec = is_executable(cmd[0]);
+	exec = is_executable(datash);
 	if (exec == -1)
 		return (1);
 	if (exec == 0)
 	{
-		dir = _which(cmd[0]);
-		if (check_error_cmd(dir, cmd) == 1)
+		dir = _which(datash->args[0], datash->_environ);
+		if (check_error_cmd(dir, datash) == 1)
 			return (1);
 	}
 
@@ -178,14 +183,14 @@ int cmd_exec(char *cmd[])
 	if (pd == 0)
 	{
 		if (exec == 0)
-			dir = _which(cmd[0]);
+			dir = _which(datash->args[0], datash->_environ);
 		else
-			dir = cmd[0];
-		execve(dir + exec, cmd, environ);
+			dir = datash->args[0];
+		execve(dir + exec, datash->args, datash->_environ);
 	}
 	else if (pd < 0)
 	{
-		perror("some error happend in foking child process");
+		perror(datash->av[0]);
 		return (1);
 	}
 	else
@@ -195,5 +200,6 @@ int cmd_exec(char *cmd[])
 		} while (!WIFEXITED(state) && !WIFSIGNALED(state));
 	}
 
+	datash->status = state / 256;
 	return (1);
 }
