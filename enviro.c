@@ -57,7 +57,7 @@ char *_getenv(const char *name, char **_environ)
 
 /**
  * _env - prints the evironment variables
- * cmd:command
+ * cmd: command
  * Return: 1 on success.
  */
 int _env(char **cmd)
