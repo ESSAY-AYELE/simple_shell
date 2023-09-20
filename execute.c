@@ -29,7 +29,7 @@ int is_cdir(char *path, int *i)
  * @_environ: environment variable
  * Return: location of the command.
  */
-char *_which(char *cmd, char **_environ)
+char *_which(char *cmd)
 {
 	char *path, *ptr_path, *token_path, *dir;
 	int len_dir, len_cmd, i;
@@ -170,7 +170,7 @@ int cmd_exec(char *cmd[])
 		return (1);
 	if (exec == 0)
 	{
-		dir = _which(cmd[0], environ);
+		dir = _which(cmd[0]);
 		if (check_error_cmd(dir, cmd) == 1)
 			return (1);
 	}
@@ -179,7 +179,7 @@ int cmd_exec(char *cmd[])
 	if (pd == 0)
 	{
 		if (exec == 0)
-			dir = _which(cmd[0], environ);
+			dir = _which(cmd[0]);
 		else
 			dir = cmd[0];
 		execve(dir + exec, cmd, environ);

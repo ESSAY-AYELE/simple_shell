@@ -19,7 +19,6 @@ typedef struct builtin_s
 } builtin_t;
 
 extern char **environ;
-
 char *slice(char *str, int start, int end);
 char **tokenize(char *input);
 void loop(void);
@@ -34,7 +33,7 @@ char *_strtok(char str[], const char *delim);
 int _isdigit(const char *s);
 
 int is_cdir(char *path, int *i);
-char *_which(char *cmd, char **_environ);
+char *_which(char *cmd);
 int is_executable(char *);
 int check_error_cmd(char *dir, char **);
 int cmd_exec(char **);

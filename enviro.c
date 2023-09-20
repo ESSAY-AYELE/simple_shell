@@ -64,6 +64,8 @@ int _env(char **cmd)
 {
 	int i, j;
 
+	if (cmd[0] == NULL)
+		return (0);
 	for (i = 0; environ[i]; i++)
 	{
 

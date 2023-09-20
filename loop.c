@@ -7,14 +7,12 @@ void loop(void)
 {
 	char *input = NULL;
 	char **arg = NULL;
-	int numChar;
+	int numChar, e = 1;
 
-	while (1)
+	while (e == 1)
 	{
 		write(STDOUT_FILENO, "=> ", 3);
 		input = read_line(&numChar);
-		if (input == "q")
-			return;
 		if (numChar != -1)
 		{
 			if (input == NULL)
@@ -22,7 +20,7 @@ void loop(void)
 			arg = tokenize(input);
 			if (!arg)
 				perror("ERROR");
-			exec_line(arg);
+			e = exec_line(arg);
 			free(input);
 			free(arg);
 		}
