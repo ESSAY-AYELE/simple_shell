@@ -25,7 +25,8 @@ builtin_table builtin_table[] = {
 for (i = 0; builtin_table[i].type; i++)
 if (str_cmp(info->argv[0], builtin_table[i].type) == 0)
 {
-info->line_count++;
+info->line_count++
+	i;
 built_in_ret = builtin_table[i].func(info);
 break;
 }
