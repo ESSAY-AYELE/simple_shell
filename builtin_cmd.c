@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 
 /**
  * find_builtin_cmd - find and execute a built-in command
