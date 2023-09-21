@@ -1,15 +1,17 @@
-#include "shell.h"
+#include "main.h"
 
 /**
- * read_line - it read the command from the screen
- * @numChar: number of character read
- * Return: the string of command
+ * read_line - reads the input string.
+ *
+ * @i_eof: return value of getline function
+ * Return: input string
  */
-char *read_line(int *numChar)
+char *read_line(int *i_eof)
 {
 	char *input = NULL;
-	size_t size = 0;
+	size_t bufsize = 0;
 
-	*numChar = getline(&input, &size, stdin);
+	*i_eof = getline(&input, &bufsize, stdin);
+
 	return (input);
 }
